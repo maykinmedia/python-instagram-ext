@@ -38,6 +38,10 @@ class Image(ApiModel):
 
 class Video(Image):
 
+    def __init__(self, *args, **kwargs):
+        self.id = kwargs.pop('id', None) # FIXME (before 2020 please)
+        super().__init__(*args, **kwargs)
+
     def __unicode__(self):
         return "Video: %s" % self.url
 
@@ -117,7 +121,7 @@ class Media(ApiModel):
         new_media.caption = None
         if entry['caption']:
             new_media.caption = Comment.object_from_dictionary(entry['caption'])
-        
+
         new_media.tags = []
         if entry['tags']:
             for tag in entry['tags']:
