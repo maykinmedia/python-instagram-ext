@@ -1,5 +1,9 @@
-from .helper import timestamp_to_datetime
 import six
+
+from .helper import timestamp_to_datetime
+
+TYPE_VIDEO = 'video'
+
 
 class ApiModel(object):
 
@@ -55,21 +59,19 @@ class Media(ApiModel):
             setattr(self, key, value)
 
     def get_standard_resolution_url(self):
-        if self.type == 'image':
-            return self.images['standard_resolution'].url
-        else:
+        if self.type == TYPE_VIDEO:
             return self.videos['standard_resolution'].url
+        else:
+            return self.images['standard_resolution'].url
 
     def get_low_resolution_url(self):
-        if self.type == 'image':
-            return self.images['low_resolution'].url
-        else:
+        if self.type == TYPE_VIDEO:
             return self.videos['low_resolution'].url
-
+        else:
+            return self.images['low_resolution'].url
 
     def get_thumbnail_url(self):
         return self.images['thumbnail'].url
-
 
     def __unicode__(self):
         return "Media: %s" % self.id
@@ -85,7 +87,7 @@ class Media(ApiModel):
         for version, version_info in six.iteritems(entry.get('images')):
             new_media.images[version] = Image.object_from_dictionary(version_info)
 
-        if new_media.type == 'video':
+        if new_media.type == TYPE_VIDEO:
             new_media.videos = {}
             if entry.get('videos', False):
                 for version, version_info in six.iteritems(entry['videos']):
